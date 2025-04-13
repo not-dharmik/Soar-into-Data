@@ -5,6 +5,8 @@ An intelligent route optimization tool built by UCI students for the **"Soar Int
 
 ---
 
+You can view the website [here](https://not-dharmik.github.io/Soar-into-Data/). Though for full functionality, you will have to run the backend on terminal.
+
 ## 📖 Project Summary
 
 Our tool uses **Melissa APIs** to enrich a dataset of addresses near UCI with the following:

@@ -1,4 +1,4 @@
-cat <<EOF > README.md
+
 # 🛰️ UCI TSP Mapper
 
 An intelligent route optimization tool built by UCI students for the **"Soar Into Data" Datathon** hosted by **Data @UCI**. This project leverages Melissa APIs and OR-Tools to help users discover the shortest path for errands around UCI, whether using a fixed list (Static) or selecting dynamically (Dynamic).

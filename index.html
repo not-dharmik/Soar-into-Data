@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UCI TSP Visualizer</title>
+  <link rel="stylesheet" href="frontend/css/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 0;
+    }
+    .intro {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+    .btn {
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+      transition: background-color 0.2s ease;
+    }
+    .btn.blue {
+      background-color: #2563eb;
+    }
+    .btn.blue:hover {
+      background-color: #1d4ed8;
+    }
+    .btn.green {
+      background-color: #10b981;
+    }
+    .btn.green:hover {
+      background-color: #059669;
+    }
+    .theme, .summary, .tools, .integration {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      text-align: left;
+    }
+    h2 {
+      color: #1e3a8a;
+    }
+    p {
+      color: #374151;
+    }
+    .highlight {
+      background-color: #fff7ed;
+      color: #b45309;
+      font-weight: bold;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <span class="logo">UCI TSP Mapper</span>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="frontend/static.html">Static Route</a>
+        <a href="frontend/dynamic.html">Dynamic Route</a>
+        <a href="frontend/team.html">Team</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="intro">
+    <h1>🛰️ Soar Into Data</h1>
+    <p>This platform was built by UCI students for the <span class="highlight">"Soar Into Data"</span> Datathon. It helps calculate optimal routes across Irvine using <span class="highlight">TSP</span>!</p>
+    <div class="buttons">
+      <a class="btn blue" href="frontend/static.html">📌 Static Route</a>
+      <a class="btn green" href="frontend/dynamic.html">🧭 Dynamic Route</a>
+    </div>
+  </main>
+
+  <section class="summary">
+    <h2>📖 Project Summary</h2>
+    <p>Our tool leverages <span class="highlight">Melissa APIs</span> to process a set of addresses near UCI, retrieving key details such as <span class="highlight">geolocation</span>, <span class="highlight">residential or business classification</span>, and unique <span class="highlight">Melissa Address Keys</span>. It then calculates the most efficient route that begins and ends at <span class="highlight">UCI</span>, covering all specified stops.</p>
+    <p>This solution is especially helpful for students who are new to Irvine or the U.S., and who may rely on <span class="highlight">walking</span>, <span class="highlight">cycling</span>, or <span class="highlight">public transportation</span> to complete errands on weekends. By optimizing travel routes, the tool reduces time, effort, and confusion—making local navigation simpler and more accessible. Looking ahead, it has the potential to evolve into a <span class="highlight">Google Maps</span> extension, combining advanced address intelligence with smart route planning to enhance everyday mobility.</p>
+  </section>
+
+  <section class="tools">
+    <h2>⚙️ How the Tools Work (Static vs. Dynamic)</h2>
+    <h3>Static Route Tool</h3>
+    <p>The user provides a fixed list of addresses. The tool processes these using <span class="highlight">Melissa APIs</span>, calculates the most efficient round-trip route starting and ending at <span class="highlight">UCI</span>, and visualizes the route on a map.</p>
+    <h3>Dynamic Route Tool</h3>
+    <p>The user inputs their current location and a list of nearby errands or points of interest. The tool dynamically adjusts in real-time, determining the optimal order for the stops and optimizing the route based on the user’s preferences.</p>
+  </section>
+
+  <section class="integration">
+    <h2>🧠 Hackathon Theme Integration</h2>
+    <p>Our tool directly connects with the <span class="highlight">"Soar Into Data"</span> theme by solving a challenge posed by <span class="highlight">Melissa Data</span>, using data to explore and optimize route planning. By analyzing key address details, we uncover hidden patterns in locations and geolocations, enabling us to create the most efficient routes. This data-driven exploration not only optimizes navigation but also demonstrates how intelligent use of data can solve real-world problems, making everyday tasks like errands and commuting simpler and more time-efficient.</p>
+  </section>
+</body>
+</html>

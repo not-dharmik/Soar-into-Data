@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Team - UCI TSP Mapper</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #003366;
+    }
+    .nav-links a {
+      margin-left: 1rem;
+      text-decoration: none;
+      color: #444;
+      font-weight: 500;
+    }
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+    h1 {
+      color: #1e3a8a;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      color: #374151;
+      font-size: 1.1rem;
+    }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .member-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .member-card:hover {
+      transform: translateY(-5px);
+    }
+    .member-name {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+    }
+    .member-role {
+      color: #4b5563;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .social-links a {
+      margin: 0 0.4rem;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .social-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <span class="logo">UCI TSP Mapper</span>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="static.html">Static Route</a>
+        <a href="dynamic.html">Dynamic Route</a>
+        <a href="team.html" class="active">Team</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>👨‍💻 Meet the Team</h1>
+    <p>We're a group of passionate UCI students solving the Traveling Salesman Problem (TSP) to help optimize routes around Irvine using Melissa APIs, FastAPI, and Leaflet.js.</p>
+
+    <div class="team-grid">
+      <!-- Member 1 -->
+      <div class="member-card">
+        <div class="member-name">Dharmik Naicker</div>
+        <div class="member-role">Full Stack Development</div>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/dharmiknaicker/" target="_blank">LinkedIn</a>
+          <a href="https://github.com/not-dharmik" target="_blank">GitHub</a>
+        </div>
+      </div>
+
+      <!-- Member 2 -->
+      <div class="member-card">
+        <div class="member-name">Shrushti Mehta</div>
+        <div class="member-role">Data Processing & Presentation</div>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/shrushti-mehta/">LinkedIn</a>
+        </div>
+      </div>
+
+      <!-- Member 3 -->
+      <div class="member-card">
+        <div class="member-name">Yash Deole</div>
+        <div class="member-role">Data Processing & Backend</div>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/hi-yash-deole/">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

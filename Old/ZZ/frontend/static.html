@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Static Route - UCI TSP Mapper</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 70vh;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
+      margin-top: 2rem;
+    }
+
+    .distance-info {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      font-weight: 500;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <span class="logo">UCI TSP Mapper</span>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="static.html" class="active">Static Route</a>
+        <a href="dynamic.html">Dynamic Route</a>
+        <a href="team.html">Team</a>
+      </div>
+    </div>
+  </nav>
+
+
+  
+
+  <main class="container">
+    <h1>📌 Static Shortest Path</h1>
+    <p>This route visualizes the shortest round trip starting and ending at UCI ISEB, covering all known addresses using optimized TSP logic.</p>
+    <div class="distance-info" id="distanceDisplay">Total Distance: ...</div>
+    <div class="loading" id="loadingStatus">⏳ Loading route...</div>
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <a class="btn green" href="map.html" target="_blank">🧭 Click Me to see Street View!</a>
+    </div>
+    <div id="map"></div>
+    
+  </main>
+
+  
+
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    let map;
+    let polyline;
+    let markers = [];
+
+    function initMap() {
+      map = L.map('map').setView([33.6431, -117.8437], 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+    }
+
+    async function loadStaticRoute() {
+      const statusBox = document.getElementById("loadingStatus");
+      const distanceBox = document.getElementById("distanceDisplay");
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/static-route")
+        const data = await res.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Unexpected data format.");
+        }
+
+        if (polyline) map.removeLayer(polyline);
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        const latlngs = [];
+        let totalDist = 0;
+
+        for (let i = 0; i < data.length; i++) {
+          const { lat, lon, address } = data[i];
+          latlngs.push([lat, lon]);
+
+          const marker = L.circleMarker([lat, lon], {
+            radius: 2,
+            color: i === 0 ? '#f97316' : '#2563eb', // ISEB in orange
+            fillColor: i === 0 ? '#f97316' : '#2563eb',
+            fillOpacity: 1
+          }).bindTooltip(`${address}`, { permanent: false });
+
+          marker.addTo(map);
+          markers.push(marker);
+
+          if (i > 0) {
+            const prev = data[i - 1];
+            const dx = lat - prev.lat;
+            const dy = lon - prev.lon;
+            const dist = Math.sqrt(dx * dx + dy * dy) * 69; // rough mile conversion
+            totalDist += dist;
+          }
+        }
+
+        polyline = L.polyline(latlngs, { color: '#2563eb', weight: 3 }).addTo(map);
+        map.fitBounds(polyline.getBounds());
+
+        distanceBox.textContent = `Total Distance: ${totalDist.toFixed(2)-2} miles`;
+        statusBox.textContent = `✅ Route loaded successfully. Stops: ${data.length}`;
+      } catch (err) {
+        console.error(err);
+        statusBox.textContent = "❌ Failed to load static route. Check backend.";
+        distanceBox.textContent = "Total Distance: ...";
+      }
+    }
+
+    initMap();
+    window.addEventListener("DOMContentLoaded", loadStaticRoute);
+  </script>
+</body>
+</html>
+
+
+
+

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dynamic Route - UCI TSP Mapper</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 70vh;
+      margin-top: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    textarea, select, button {
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    .distance-info {
+      font-size: 1.1rem;
+      color: #1e3a8a;
+      font-weight: 500;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .loading-status {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+      color: #1e3a8a;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-container">
+      <span class="logo">UCI TSP Mapper</span>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="static.html">Static Route</a>
+        <a href="dynamic.html" class="active">Dynamic Route</a>
+        <a href="team.html">Team</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>🧭 Dynamic Shortest Path</h1>
+    <p>Enter each address (exactly as it appears in your dataset) on a new line. Choose a starting address from your list.</p>
+
+    <textarea id="addressInput" placeholder="Paste or type addresses here..."></textarea><br>
+    <label for="startSelect">Select Starting Address:</label><br>
+    <select id="startSelect"></select><br>
+    <button class="btn-load" onclick="getRoute()">Find Route</button>
+
+    <div class="loading-status" id="loadingStatus">Awaiting input...</div>
+    <div class="distance-info" id="distanceDisplay">Total Distance: ...</div>
+
+    <div id="map"></div>
+    
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    let map;
+    let polyline;
+    let markers = [];
+
+    function initMap() {
+      map = L.map('map').setView([33.6431, -117.8437], 14);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+    }
+
+    function updateStartOptions(addresses) {
+      const startSelect = document.getElementById("startSelect");
+      const current = startSelect.value;
+      startSelect.innerHTML = "";
+
+      addresses.forEach(addr => {
+        const opt = document.createElement("option");
+        opt.value = addr;
+        opt.textContent = addr;
+        startSelect.appendChild(opt);
+      });
+
+      if (addresses.includes(current)) {
+        startSelect.value = current;
+      }
+    }
+
+    function handleTextAreaChange() {
+      const inputText = document.getElementById("addressInput").value;
+      const selectedAddresses = inputText.split("\n").map(s => s.trim()).filter(Boolean);
+      updateStartOptions(selectedAddresses);
+    }
+
+    async function getRoute() {
+      const inputText = document.getElementById("addressInput").value;
+      const selectedAddresses = inputText.split("\n").map(s => s.trim()).filter(Boolean);
+      const startAddress = document.getElementById("startSelect").value;
+
+      const button = document.querySelector("button.btn-load");
+      const status = document.getElementById("loadingStatus");
+      const distanceBox = document.getElementById("distanceDisplay");
+
+      if (!selectedAddresses.includes(startAddress)) {
+        alert("Starting address must be in the list.");
+        return;
+      }
+
+      button.disabled = true;
+      status.textContent = "⏳ Calculating shortest path...";
+      distanceBox.textContent = "Total Distance: ...";
+
+      try {
+        const response = await fetch("http://localhost:8000/dynamic-route", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ addresses: selectedAddresses, start: startAddress })
+        });
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) throw new Error("Invalid response from backend.");
+
+        if (polyline) map.removeLayer(polyline);
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        const latlngs = [];
+        let totalDist = 0;
+
+        for (let i = 0; i < data.length; i++) {
+          const { lat, lon, address } = data[i];
+          latlngs.push([lat, lon]);
+
+          const isStart = address === startAddress;
+          const marker = L.circleMarker([lat, lon], {
+            radius: 5,
+            color: isStart ? '#f97316' : '#10b981',
+            fillColor: isStart ? '#f97316' : '#10b981',
+            fillOpacity: 1
+          }).bindTooltip(`${i + 1}. ${address}`, { permanent: false });
+
+          marker.addTo(map);
+          markers.push(marker);
+
+          if (i > 0) {
+            const prev = data[i - 1];
+            const dx = lat - prev.lat;
+            const dy = lon - prev.lon;
+            const dist = Math.sqrt(dx * dx + dy * dy) * 69; // rough conversion to miles
+            totalDist += dist;
+          }
+        }
+
+        polyline = L.polyline(latlngs, { color: '#10b981', weight: 3 }).addTo(map);
+        map.fitBounds(polyline.getBounds());
+
+        status.textContent = `✅ Route ready! Total Stops: ${data.length}`;
+        distanceBox.textContent = `Total Distance: ${totalDist.toFixed(2)} miles`;
+      } catch (error) {
+        console.error(error);
+        status.textContent = "❌ Failed to fetch route. Try again.";
+        distanceBox.textContent = "Total Distance: ...";
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    initMap();
+    document.getElementById("addressInput").addEventListener("input", handleTextAreaChange);
+  </script>
+</body>
+</html>
